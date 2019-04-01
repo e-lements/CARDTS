@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <script src="cardts.js"></script>
+    <style>
+        cardts-card {
+            float: left;
+            width: calc(90vw/15);
+            width: calc(120vw/15);
+            /* zoom: .5; */
+            padding: calc(9vw/26);
+        }
+
+        cardts-card[rank="1"] {
+            clear: both;
+            /* white-space: pre; */
+            /* background: red; */
+        }
+    </style>
+</head>
+
+<body>
+    <cardts-card id=CARDTSTitle suit=0 rank=1 letters="CCCC"></cardts-card>
+    <cardts-card id=CARDTSTitle suit=1 rank=11 letters="AAAA"></cardts-card>
+    <cardts-card id=CARDTSTitle suit=3 rank=13 letters="RRRR"></cardts-card>
+    <cardts-card id=CARDTSTitle suit=2 rank=12 letters="DDDD"></cardts-card>
+    <cardts-card id=CARDTSTitle suit=0 rank=13 letters="TTTT"></cardts-card>
+    <cardts-card id=CARDTSTitle suit=1 rank=11 letters="SSSS"></cardts-card>
+    <script>
+        CARDTS.init();
+        let cardnr = 1;
+        setInterval(() => {
+            //let card = [...document.querySelectorAll('CARDTS-CARD')][0 | 52 * Math.random()];
+            //card.random();
+            //cardnr = 0 | 1 + 5 * Math.random();
+            if (cardnr == 6) cardnr = 1;
+            let card = [...CARDTSTitle][cardnr++];
+            console.log(card);
+            card.setAttribute('suit', [0, 1, 2, 3][0 | 4 * Math.random()]);
+            card.setAttribute('rank', [11, 12, 13][0 | 3 * Math.random()]);
+        }, 300000)
+    </script>
+</body>
+
+</html>
