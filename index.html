@@ -1,44 +1,44 @@
 <html>
 
 <head>
-    <script src="cardts.js"></script>
+    <title>CARDTS</title>
+    <script src="cardts-52playingcards.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <style>
         cardts-card {
             float: left;
-            width: calc(90vw/15);
-            width: calc(120vw/15);
-            /* zoom: .5; */
+            width: calc(94vw/15);
             padding: calc(9vw/26);
         }
 
+        cardts-card[rank="A"],
         cardts-card[rank="1"] {
             clear: both;
-            /* white-space: pre; */
-            /* background: red; */
         }
     </style>
 </head>
 
 <body>
-    <cardts-card id=CARDTSTitle suit=0 rank=1 letters="CCCC"></cardts-card>
-    <cardts-card id=CARDTSTitle suit=1 rank=11 letters="AAAA"></cardts-card>
-    <cardts-card id=CARDTSTitle suit=3 rank=13 letters="RRRR"></cardts-card>
-    <cardts-card id=CARDTSTitle suit=2 rank=12 letters="DDDD"></cardts-card>
-    <cardts-card id=CARDTSTitle suit=0 rank=13 letters="TTTT"></cardts-card>
-    <cardts-card id=CARDTSTitle suit=1 rank=11 letters="SSSS"></cardts-card>
     <script>
-        CARDTS.init();
+        CARDTS.init({
+            ranks: 'A,2,3,4,5,6,7,8,9,10,J,Q,K,0',
+            suits: 'S,H,D,C'
+        });
+        document.body.appendChild(CARDTS.cardString('CARDTS'));
+
+        CARDTS.addCards();
+
+        // random item from Array x OR beteen 0 and x value
+        let random = x => Array.isArray(x) ? x[random(x.length)] : 0 | x * Math.random();
+
         let cardnr = 1;
         setInterval(() => {
-            //let card = [...document.querySelectorAll('CARDTS-CARD')][0 | 52 * Math.random()];
-            //card.random();
-            //cardnr = 0 | 1 + 5 * Math.random();
             if (cardnr == 6) cardnr = 1;
-            let card = [...CARDTSTitle][cardnr++];
-            console.log(card);
-            card.setAttribute('suit', [0, 1, 2, 3][0 | 4 * Math.random()]);
-            card.setAttribute('rank', [11, 12, 13][0 | 3 * Math.random()]);
-        }, 300000)
+            let titleCards = [...document.querySelectorAll('[letters]')];
+            let card = titleCards[cardnr++];
+            card.setAttribute('suit', random(['Spade', 'Heart', 'Diamond', 'Club']));
+            card.setAttribute('rank', random(['J', 'Q', 'K']));
+        }, 500)
     </script>
 </body>
 
