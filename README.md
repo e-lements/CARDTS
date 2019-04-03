@@ -1,13 +1,15 @@
 # CARDTS- Custom Elements for (Card) (Games)
 
+** ALPHA!!! **
+
 https://e-lements.github.io/CARDTS/
 
 Has generic WebComponents to display cards... any card like HTML element
 
 ### Examples
 
-* 52 playing cards
-    * Solitaire game
+* 52 playing cards (working on it)
+    * Solitaire game 
     * Card Designer - design your own look
 * [HogCardts](https://e-lements.github.io/hogcardts/) - (multimedia) Harry Potter themed Concentration game
     * https://e-lements.github.io/hogcardts/

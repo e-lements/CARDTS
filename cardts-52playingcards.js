@@ -181,7 +181,7 @@
 window['CARDTS'].card = (
     // card attributes
     {
-        logging = 0,
+        logging = 1,
 
         suit,
         rank,
