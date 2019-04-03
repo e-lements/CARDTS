@@ -1,0 +1,337 @@
+<html>
+
+<head>
+    <title>Solitaire CARDTS</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script src="cardts-52playingcards.js"></script>
+    <style>
+        * {
+            /* sensible default values */
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #007D3B;
+            height: 100%;
+            min-height: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            --appWidth: 100%;
+            --cardWidth: calc(1vw * calc(var(--appWidth)/11));
+            --cardPadding: calc(9vw/26);
+            --TableBackground: green;
+            --TableOffsetY: 2.5em;
+            --StockOffsetX: 2px;
+            --StockOffsetY: 6px;
+        }
+
+        header,
+        main,
+        footer {
+            float: left;
+        }
+
+        header {
+            width: 100%;
+            /* background: olive; */
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            /* background: var(--TableBackground); */
+        }
+
+        footer {
+            width: 100%;
+        }
+
+        body {
+            background-image: url('background_green.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #CardtsHeader {
+            padding: 0;
+            margin: 0 2em;
+            list-style: none;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-evenly;
+        }
+
+        cardts-card {
+            float: left;
+            width: var(--cardWidth);
+            /* zoom: .5; */
+            padding: var(--cardPadding);
+            /*  this makes the white card transparent!! */
+            /* opacity: .8; */
+        }
+
+        header CARDTS-CARD {
+            zoom: .5;
+        }
+
+        cardts-card[rank="1"] {
+            /* clear: both; */
+            /* white-space: pre; */
+            /* background: red; */
+        }
+
+        #Solitaire {
+            /* 3 column grid */
+            display: grid;
+            grid-template-columns: 1fr 7fr 1fr;
+            grid-template-rows: 1fr;
+            grid-template-areas: ". . .";
+            grid-column-gap: 3em;
+        }
+
+        #Deck {
+            width: 100%;
+            padding: 0 5%;
+        }
+
+        /* locations where a card can be dropped on Table and TableFoundations */
+        [id^="Table"] CARDTS-PILE :last-child {
+            border: 2px dashed greenyellow;
+            transform: scale(1);
+        }
+
+        [id^="Table"] CARDTS-PILE :nth-child(1) {
+            /* first card on Table is not (slightly) rotated , prevent style="" declaration */
+            transform: rotate(0deg) !important;
+        }
+
+        #TableFoundations CARDTS-PILE :nth-child(1) {
+            opacity: .7;
+        }
+
+        /* draggable cards */
+        [draggable="true"] {
+            border: 2px dashed hotpink;
+            transform: scale(1);
+        }
+
+        #Deck CARDTS-PILE,
+        #Table CARDTS-PILE,
+        #TableFoundations CARDTS-PILE {
+            /* relative container so absolute positioned cards are contained in the container */
+            position: relative;
+        }
+
+        #Deck CARDTS-CARD:nth-child(n+2),
+        #Table CARDTS-CARD,
+        #TableFoundations CARDTS-CARD:nth-child(n+2) {
+            /* display additional cards on top */
+            position: absolute;
+            left: 0;
+        }
+
+        #Stock :nth-child(1) {
+            top: calc(3 * var(--StockOffsetY));
+            left: calc(3 * var(--StockOffsetX));
+        }
+
+        #Stock :nth-child(2) {
+            top: calc(2 * var(--StockOffsetY));
+            left: calc(2 * var(--StockOffsetX));
+        }
+
+        #Stock :nth-child(3) {
+            top: calc(1 * var(--StockOffsetY));
+            left: calc(1 * var(--StockOffsetX));
+        }
+
+        #Waste {
+            margin-top: var(--TableOffsetY);
+        }
+
+        #Waste :nth-last-child(2) {
+            top: calc(1 * var(--TableOffsetY));
+        }
+
+        #Waste :nth-last-child(1) {
+            top: calc(2 * var(--TableOffsetY));
+        }
+
+        #Table {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-rows: 1fr;
+            grid-template-areas: ". . . . . . .";
+        }
+
+        #Deck,
+        #TableFoundations {
+            /*  display 4 foundations in one column */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #TableFoundations CARDTS-PILE CARDTS-CARD:nth-child(1) {
+            /* style first foundation 'card' the foundation suit */
+            filter: grayscale(100%) opacity(80%);
+        }
+    </style>
+    <style id=TableOffsets>
+        /* JavaScript adds 13 CSS rules here */
+    </style>
+</head>
+
+<body>
+    <header>
+        <cardts-pile id=CardtsHeader>
+            <!-- Cardts with Title Letters are injected here -->
+        </cardts-pile>
+        <div>
+            TIME MOVES
+        </div>
+    </header>
+    <main>
+        <!-- Here is the Solitaire Game -->
+        <cardts-area id=Solitaire>
+            <div id=Deck>
+                <cardts-pile id=Stock> </cardts-pile>
+                <cardts-pile id=Waste> </cardts-pile>
+            </div>
+            <div id=Table>
+                <!-- 7 sequence piles are injected here -->
+            </div>
+            <div id=TableFoundations>
+                <!-- 4 foundation piles are injected here -->
+            </div>
+        </cardts-area>
+    </main>
+    <style>
+    </style>
+
+    <script>
+        // random item from Array x OR beteen 0 and x value
+        let random = x => Array.isArray(x) ? x[random(x.length)] : 0 | x * Math.random();
+        // card creator
+        let newCard = settings => CARDTS.newCard(
+            Object.assign(settings, {
+                label: 'SOLITAIRE'
+            })
+        );
+        // Fisher Yates shuffle
+        let shuffle = arr => {  // mutates original!
+            let temp, rand, idx = arr && arr.length;
+            while (idx) {
+                rand = random(idx--);
+                temp = arr[idx];
+                arr[idx] = arr[rand];
+                arr[rand] = temp;
+            }
+        }
+
+        // let setBackground = (element, suit) => {
+        //     let img = CARDTS.card({ suit, rank: 1 });
+        //     element.style.backgroundImage = `url('${img.src}')`;
+        //     console.log(element.style, img.src);
+        // }
+        // setBackground(Spades, 0);
+        // setBackground(Hearts, 0);
+
+        CARDTS.init();
+
+        CardtsHeader.appendChild(CARDTS.cardString('CARDTS-SOLITAIRE'));
+
+        /* Play Solitaire **/
+
+        //create one deck of 52 cards
+        let ranks = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
+        let suits = ['S', 'H', 'D', 'C'];
+        let deck = suits.map(suit => ranks.map(rank => newCard({ suit, rank }))).flat();
+
+        //shuffle(deck);
+
+        //put whole deck in Stock
+        deck.forEach(card => Stock.appendChild(card));
+
+        let addCardToPile = (
+            card,
+            pile,
+            before = false
+        ) => {
+            try {
+                if (before) card = pile.insertBefore(card, before);
+                else card = pile.appendChild(card);
+                card.style.transform = `rotate(${random(6) - 3}deg) skewY(1deg)`;
+            } catch (e) {
+                console.error(e, '\n', card, pile);
+            }
+        };
+        let getStockCard = (cardid = false, pile = Stock) => {
+            let stockCards = Stock.get();// all cards in Stock
+            let card = Stock.get()[stockCards.length - 1]; // last (top) card
+            if (cardid) card = stockCards.filter(card => card.id == cardid)[0];
+            if (typeof cardid == 'number') card = stockCards[cardid];
+            return card;
+        }
+        let dealCard = (count, pile, before = false) => {
+            while (count--) {
+                let card = getStockCard();
+                addCardToPile(card, pile, before);
+            }
+        }
+
+        // declare function and immediatly invoke it (IIFE)
+        let initPiles = (
+            container,
+            count,
+            name,
+            initFunc = () => { }
+        ) => {
+            while (count) {
+                let pile = document.createElement('CARDTS-PILE');
+                container.insertBefore(pile, container.firstElementChild);
+                initFunc(pile, count);
+                pile.id = name + count--;
+            }
+        };
+        initPiles(
+            Table,  // in Table DOM element
+            7,      // 7 piles
+            'Pile'  // id Pile1, Pile2, ...
+        );
+
+        //fill table
+        [...Table.children].map((pile, idx) => dealCard(idx + 1, pile));
+
+        initPiles(
+            TableFoundations,
+            4,
+            'Foundation',
+            (pile, idx) => {
+                addCardToPile(
+                    newCard({ rank: 1, suit: idx - 1, opacity: 0.2 }), // use one Ace card as background
+                    pile,
+                    pile.firstElementChild
+                )
+            }
+        )
+
+        dealCard(3, Waste);
+
+        let nth = 2;
+        for (let idx = 1; idx < 13; idx++) {
+            let CSSrule = `#Table CARDTS-CARD:nth-child(${nth++}){ top: calc(${idx} * var(--TableOffsetY)) }`;
+            TableOffsets.sheet.insertRule(CSSrule);
+        }
+
+        getStockCard().to(Pile1);
+    </script>
+    <footer>Cardts - by Danny Engelman</footer>
+</body>
+
+</html>
